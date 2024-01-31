@@ -28,12 +28,16 @@
     "@mikro-orm/postgresql": "^5.8.6",
     "@types/express-serve-static-core": "^4.17.42",
     "apollo-server-express": "^2.19.1",
+    "connect-redis": "^7.1.1",
     "csv-parser": "^3.0.0",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
+    "express-session": "^1.18.0",
     "graphql": "^15.8.0",
+    "redis": "^4.6.12",
     "reflect-metadata": "^0.2.1",
     "type-graphql": "^1.1.1",
+    "typeorm": "^0.3.20",
     "uuid": "^9.0.1"
   },
   "mikro-orm": {

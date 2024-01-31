@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property, } from "@mikro-orm/core";
+import { CreateDateColumn,UpdateDateColumn } from 'typeorm'
 import { v4 } from "uuid";
 import { UUID } from "../types/types";
 import { hasOwn } from "../types/helper";
@@ -12,15 +13,15 @@ constructor(init: {}) {
         this.createdAt = hasOwn(init, 'createdAt') ? init.createdAt : new Date();
         this.updatedAt = hasOwn(init, 'updatedAt') ? init.updatedAt : new Date();
     }
-    @Field()
+    //@Field()
     @PrimaryKey({ columnType: 'uuid', defaultRaw: 'gen_random_uuid()' })
     id: UUID;
 
-    @Field(()=>String)
+    //@Field()
     @Property()
     createdAt: Date;
 
-    @Field(()=>String)
+    //@Field()
     @Property({ onUpdate: () => new Date() })
     updatedAt: Date;
 }
