@@ -1,7 +1,9 @@
 import {  Entity, Property, Unique } from "@mikro-orm/core";
 import { EntityInitData } from "../types/types";
 import { BaseEntity } from "./BaseEntity";
+import { Field , ObjectType} from "type-graphql";
 
+@ObjectType()
 @Entity({ tableName: 'users'})
 export class UserEntity extends BaseEntity {
     constructor(init: EntityInitData<UserEntity,'name'>) {
@@ -10,6 +12,7 @@ export class UserEntity extends BaseEntity {
     }
 
     @Unique()
+    @Field(() => String)
     @Property({ columnType: 'varchar(255)'})
     name: string;
 }
