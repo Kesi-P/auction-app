@@ -30,8 +30,10 @@ export class UsersResolver {
         ){
         
         const user = await em.findOne(UserEntity,{name:input.name});
+        //localStorage.setItem('username', input.name);
+        
         if (user) {
-            // User already exists, return existing user
+            // User already exists, return existing user            
             return user;
           }else {
             

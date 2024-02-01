@@ -8,24 +8,37 @@ import { buildSchema } from "type-graphql";
 import { TestResolver } from "../resolvers/test";
 import { UsersResolver } from "../resolvers/users";
 const { ApolloServer } = require("apollo-server-express");
+import RedisStore from 'connect-redis'
+import session from "express-session"
+import {createClient} from "redis"
+import Redis from 'ioredis'
+import { MyContext } from '../resolvers/mycontext';
+
+
+
 const main = async () => {
   const orm = await MikroORM.init(mikroOrmConfig);
   await orm.getMigrator().up()
 
   const app = express();
+
   
-  const apollerServer = new ApolloServer({
+
+
+
+ 
+const apollerServer = new ApolloServer({
     schema:await buildSchema({
       resolvers:[TestResolver,UsersResolver],
       validate:false      
     }),
     //obj that can be excessablr to  all the respons
-    context: () => ({ em: orm.em})
+    context: ({}) => ({ em: orm.em})
   })
   //create graphql-endpoit on express
   apollerServer.applyMiddleware({app })
   
-  app.listen(8000, () => {
+  app.listen(4000, () => {
     console.log('Server started')
   })
   // const users = await orm.em.find(UserEntity, {})
