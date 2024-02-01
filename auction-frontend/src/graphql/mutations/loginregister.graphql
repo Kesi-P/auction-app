@@ -1,0 +1,6 @@
+mutation LoginRegis($name: String!) {
+      login_regis(input:{name: $name}) {
+          id
+          name
+        }
+      }

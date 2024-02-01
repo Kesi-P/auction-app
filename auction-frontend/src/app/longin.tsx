@@ -21,12 +21,7 @@ export default function Login() {
   }
   //fech data from graphql
   const [,login_regis] = useMutation(`
-    mutation LoginRegis($name: String!) {
-      login_regis(input:{name: $name}) {
-          id
-          name
-        }
-      }`)
+    `)
   return (
     <>
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
