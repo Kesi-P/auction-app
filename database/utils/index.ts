@@ -13,6 +13,8 @@ import session from "express-session"
 import {createClient} from "redis"
 import Redis from 'ioredis'
 import { MyContext } from '../resolvers/mycontext';
+import { Auctionsesolver } from '../resolvers/auctions';
+import { BidsResolver } from '../resolvers/bids';
 
 
 
@@ -29,7 +31,7 @@ const main = async () => {
  
 const apollerServer = new ApolloServer({
     schema:await buildSchema({
-      resolvers:[TestResolver,UsersResolver],
+      resolvers:[Auctionsesolver,UsersResolver,BidsResolver],
       validate:false      
     }),
     //obj that can be excessablr to  all the respons

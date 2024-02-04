@@ -3,12 +3,12 @@ import Image from "next/image";
 import React, { useState } from 'react';
 import { Client, cacheExchange, fetchExchange,useMutation,gql } from 'urql';
 import { useRouter } from "next/navigation";
-
+//import { useLoginRegisMutation } from '../../generated/graphql'
 // const client = new Client({
 //   url: 'http://localhost:4000/graphql',
 //   exchanges: [cacheExchange, fetchExchange],
 // });
-export default function Login() {
+export default function LoginRegis() {
   const router = useRouter();
   const [formData, setFormData] = useState('');
   const handleChange = (e:any) => {
@@ -17,30 +17,38 @@ export default function Login() {
   };
   const handleSubmit = async (e:any) => {
     e.preventDefault();
-    //const response = await login_regis({name:formData})
-    login_regis({name:formData}).then(result => {
+    const response = await login_regis({name:formData}).then(result => {
       
-        console.error('Oh no!', result);
+      try {
+        if(result.data.login_regis.id){
+          localStorage.setItem('userid', result.data.login_regis.id);
+        }
+      } catch (error) {
+        console.error(error);
+        
+      }
+     
+    }); 
+    // console.log('responsett',response)
+    // localStorage.setItem('username', formData);
     
-    });
-    //console.log('res',response)
-    localStorage.setItem('username', formData);
-    window.dispatchEvent(new Event('storage'))
     router.push("/");
   }
   //fech data from graphql
-  const [,login_regis] = useMutation(`
+  const [_,login_regis] = useMutation(`
     mutation LoginRegis($name: String!) {
       login_regis(input:{name: $name}) {
           id
           name
         }
-      }`)
+       }`)
+
+  // const [login_regis,] = useLoginRegisMutation()
   return (
     <>
     
       
-      <h1>Welcome</h1>
+      <h1>WelcomeTT</h1>
       <div className="relative flex place-items-center" >
     <form className="w-full max-w-sm" onSubmit={handleSubmit}>
   <div className="flex items-center border-b border-teal-500 py-2">

@@ -3,7 +3,9 @@ import { BaseEntity } from "./BaseEntity";
 import { EntityInitData } from "../types/types";
 import { UserEntity } from "./User";
 import { AuctionEntity } from "./Auction";
+import { Field, ObjectType } from "type-graphql";
 
+@ObjectType()
 @Entity({ tableName: 'bids' })
 export class BidEntity extends BaseEntity {
     constructor(init: EntityInitData<BidEntity, 'bidder' | 'auction' | 'price' | 'isMaximum'>) {
@@ -33,10 +35,10 @@ export class BidEntity extends BaseEntity {
         columnType: 'uuid',
     })
     auction: AuctionEntity;
-
+    @Field()
     @Property({ columnType: 'integer' })
     price: number;
-
+    @Field()
     @Property({ columnType: 'boolean', default: false })
     isMaximum: boolean;
     

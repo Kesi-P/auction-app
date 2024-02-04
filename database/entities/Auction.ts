@@ -2,7 +2,9 @@ import { Entity, Enum, ManyToOne, Property } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity";
 import { UserEntity } from "./User";
 import { AuctionStatus, EntityInitData, ItemCategory } from "../types/types";
+import { Field, ObjectType } from "type-graphql";
 
+@ObjectType()
 @Entity({ tableName: 'auctions'})
 export class AuctionEntity extends BaseEntity {
     constructor(init: EntityInitData<AuctionEntity, 'seller' | 'title' | 'description' | 'category' | 'startPrice' | 'terminateAt' | 'status' >) {
@@ -25,22 +27,22 @@ export class AuctionEntity extends BaseEntity {
         columnType: 'uuid',
       })
     seller: UserEntity;
-
+    @Field()
     @Property({ columnType: 'varchar(225)' })
     title: string;
-
+    @Field()
     @Property({ columnType: 'text' })
     description: string;
-
+    
     @Enum({ items: () => ItemCategory })
     category: ItemCategory;
-
+    @Field()
     @Property({ columnType: 'integer'})
     startPrice: number;
-
+    @Field()
     @Property()
     terminateAt: Date;
-
+    
     @Enum({items: () => AuctionStatus, default: AuctionStatus.ON_GOING })
     status: AuctionStatus;
 }

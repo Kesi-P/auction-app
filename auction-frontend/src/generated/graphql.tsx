@@ -1,20 +1,15 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-const defaultOptions = {} as const;
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
 };
 
 export type Mutation = {
@@ -29,26 +24,32 @@ export type MutationLogin_RegisArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  test: Scalars['String']['output'];
+  test: Scalars['String'];
   users: Array<UserEntity>;
 };
 
 export type UserEntity = {
   __typename?: 'UserEntity';
-  id: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type UserInput = {
-  name: Scalars['String']['input'];
+  name: Scalars['String'];
 };
 
 export type LoginRegisMutationVariables = Exact<{
-  name: Scalars['String']['input'];
+  name: Scalars['String'];
 }>;
 
 
-export type LoginRegisMutation = { __typename?: 'Mutation', login_regis: { __typename?: 'UserEntity', id: string, name: string } };
+export type LoginRegisMutation = (
+  { __typename?: 'Mutation' }
+  & { login_regis: (
+    { __typename?: 'UserEntity' }
+    & Pick<UserEntity, 'id' | 'name'>
+  ) }
+);
 
 
 export const LoginRegisDocument = gql`
@@ -79,8 +80,8 @@ export type LoginRegisMutationFn = Apollo.MutationFunction<LoginRegisMutation, L
  * });
  */
 export function useLoginRegisMutation(baseOptions?: Apollo.MutationHookOptions<LoginRegisMutation, LoginRegisMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<LoginRegisMutation, LoginRegisMutationVariables>(LoginRegisDocument, options);
+        //const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginRegisMutation, LoginRegisMutationVariables>(LoginRegisDocument, baseOptions);
       }
 export type LoginRegisMutationHookResult = ReturnType<typeof useLoginRegisMutation>;
 export type LoginRegisMutationResult = Apollo.MutationResult<LoginRegisMutation>;
