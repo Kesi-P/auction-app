@@ -1,16 +1,23 @@
 "use client";
 import Image from "next/image";
 import React, { useState,useEffect } from 'react';
-import { Client, Provider, cacheExchange, fetchExchange } from 'urql';
 import LoginRegis from './components/loginRegis'
 import Buyer from "./components/buyer";
 import { useRouter } from "next/navigation";
+import  RootLayout from './layout';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client'
 
-const client = new Client({
-  url: 'http://localhost:4000/graphql',
-  exchanges: [cacheExchange, fetchExchange], //refresh automatically
-});
+// const client = new Client({
+//   url: 'http://localhost:4000/graphql',
+//   exchanges: [cacheExchange, fetchExchange], //refresh automatically
+// });
 
+// Create ApolloClient instance
+// const client = new ApolloClient({
+//   uri: 'http://localhost:4000/graphql',
+//   cache: new InMemoryCache(),
+// });
 export default function Home() {
   const router = useRouter();
   const [logIn, setlogIn] = useState(false);
@@ -27,9 +34,13 @@ export default function Home() {
    
       
     return (
-      
-        <Provider value={client}>
-          {logIn ? <Buyer />: <LoginRegis />}
-  </Provider>
+       <>
+       {/* <React.StrictMode>
+    <RootLayout>
+     <LoginRegis />
+    </RootLayout>
+  </React.StrictMode> */}
+  <LoginRegis />
+       </>
     )
 }

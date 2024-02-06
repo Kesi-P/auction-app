@@ -4,6 +4,7 @@ import { AuctionEntity } from "../entities/Auction";
 import { MyContext } from "./mycontext";
 import { BidEntity } from "../entities";
 import { wrap } from '@mikro-orm/core';
+import { AuctionStatus, ItemCategory } from '../types/types';
 
 @InputType()
 class AuctionInput {
@@ -24,9 +25,18 @@ class BidInput extends AuctionInput {
 }
 
 @ObjectType()
+class FieldError {
+    
+    @Field()
+    message: string;
+  }
+
+@ObjectType()
 class BidResponse {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
     @Field(() => BidEntity, { nullable: true })
-    bid: BidEntity | null;
+    bid?: BidEntity;
 }
 
 @Resolver()
@@ -45,10 +55,22 @@ export class BidsResolver {
                 await em.flush();
                 return {bid :updateMaimum};
             }
-            return {bid:null};
+            return {
+                errors: [
+                  {
+                    message: "You bid is the maximum",
+                  },
+                ],
+              };;
         } catch (error) {
             console.error('Error:', error);
-            return {bid:null};
+            return {
+                errors: [
+                  {
+                    message: "Error",
+                  },
+                ],
+              };
         }
     }
 
@@ -62,10 +84,19 @@ export class BidsResolver {
             const addPrice = await em.findOneOrFail(BidEntity, {auction: inputBid.auctionId})
             const exPired = await em.findOneOrFail(AuctionEntity, {id: inputBid.auctionId})
             let auctionExpired = true
-            // if (exPired.terminateAt < new Date()) {
-            //     auctionExpired = false
-            //     return { bid: null }; // Auction is expired
-            // }
+            if (exPired.terminateAt <= new Date() && exPired.startPrice < inputBid.price) {
+                const upDateAuctions = wrap(exPired).assign({
+                    status : AuctionStatus.FINISHED                    
+                })
+                await em.flush()
+                return {
+                    errors: [
+                      {
+                        message: "The auction is expired",
+                      },
+                    ],
+                  };; // Auction is expired
+            }
             if(exPired.terminateAt > new Date()){
 
             
@@ -94,10 +125,22 @@ export class BidsResolver {
             }
         }
             
-                return { bid: null };
+        return {
+            errors: [
+              {
+                message: "not found",
+              },
+            ],
+          };
         } catch (error) {
             console.error('Error:', error);
-            return { bid: null }; // Handle errors
+            return {
+                errors: [
+                  {
+                    message: "Error",
+                  },
+                ],
+              };
         }
     }
 }

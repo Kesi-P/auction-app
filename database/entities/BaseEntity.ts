@@ -13,7 +13,7 @@ constructor(init: {}) {
         this.createdAt = hasOwn(init, 'createdAt') ? init.createdAt : new Date();
         this.updatedAt = hasOwn(init, 'updatedAt') ? init.updatedAt : new Date();
     }
-    //@Field()
+    @Field()
     @PrimaryKey({ columnType: 'uuid', defaultRaw: 'gen_random_uuid()' })
     id: UUID;
 

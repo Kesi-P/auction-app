@@ -1,0 +1,19 @@
+
+mutation RegisAuction($userId: String!, $title: String!, $description: String!, $category: ItemCategory!, 
+$status: AuctionStatus!, $startPrice: Float!, $terminateAt: DateTime!) {
+  regisAuction(input: {
+    userId: $userId,
+    title: $title,
+    description: $description,
+    category: $category,
+    status: $status,
+    startPrice: $startPrice,
+    terminate: $terminateAt
+  }) {
+    id
+    title
+    description
+    startPrice
+    terminateAt
+  }
+}
