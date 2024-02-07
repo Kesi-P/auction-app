@@ -17,6 +17,7 @@ export default function Home() {
     status : AuctionStatus.OnGoing
   });
   const [date,setDate] = useState(new Date())
+  const [showModal, setShowModal] = useState(false);
   const [regisAuction] = useRegisAuctionMutation();
 
   const handleInputChange = (e:any) => {
@@ -27,6 +28,7 @@ export default function Home() {
 
   const createAuction = async () => {
     console.log(date)
+    setShowModal(false)
     try {
       const { data } = await regisAuction({
         variables: { ...formData ,terminateAt:date},
@@ -39,7 +41,45 @@ export default function Home() {
 
   return (
     <>
-      <form className="w-full max-w-lg">
+      
+      
+
+      <div className="w-auto h-auto ml-corner t" >
+      <h3 className="text-xl font-semi">
+                    My Auction
+                  </h3>
+      </div>
+      
+      <div className="w-auto h-auto ml-corner b" onClick={() => setShowModal(true)}>
+        <div className="flex-1 h-full">
+          <div className="flex-1 h-full p-2 border border-gray-400 rounded-full">
+            <div className="relative">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      {showModal ? (
+        <>
+          <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+                  <h3 className="text-3xl font-semibold">
+                    Modal Title
+                  </h3>
+                  
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                <form className="w-full max-w-lg">
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
@@ -118,15 +158,32 @@ export default function Home() {
           </div>
         </div>
       </form>
-      <div>
-        <a
-          href="#"
-          className="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0"
-          onClick={createAuction}
-        >
-          Create Auction
-        </a>
-      </div>
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                  <button
+                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => createAuction()}
+                  >
+                    Create Auctions
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </>
   );
 }
+    
+ 

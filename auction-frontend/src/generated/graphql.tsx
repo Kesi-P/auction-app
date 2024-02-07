@@ -38,6 +38,11 @@ export type AuctionInputnew = {
   status: AuctionStatus;
 };
 
+export type AuctionResponse = {
+  __typename?: 'AuctionResponse';
+  auction?: Maybe<Array<AuctionEntity>>;
+};
+
 export enum AuctionStatus {
   OnGoing = 'ON_GOING',
   OnHold = 'ON_HOLD',
@@ -89,6 +94,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   login_regis: UserEntity;
   regisAuction: AuctionEntity;
+  getMaxAndAddMax: BidResponse;
   regisBid: BidResponse;
 };
 
@@ -103,6 +109,11 @@ export type MutationRegisAuctionArgs = {
 };
 
 
+export type MutationGetMaxAndAddMaxArgs = {
+  input: AuctionInput;
+};
+
+
 export type MutationRegisBidArgs = {
   inputBid: BidInput;
 };
@@ -110,12 +121,7 @@ export type MutationRegisBidArgs = {
 export type Query = {
   __typename?: 'Query';
   users: Array<UserEntity>;
-  getMaxAndAddMax: BidResponse;
-};
-
-
-export type QueryGetMaxAndAddMaxArgs = {
-  input: AuctionInput;
+  getAllAuctions: AuctionResponse;
 };
 
 export type UserEntity = {
@@ -127,6 +133,23 @@ export type UserEntity = {
 export type UserInput = {
   name: Scalars['String'];
 };
+
+export type GetMaxAndAddMaxMutationVariables = Exact<{
+  userId: Scalars['String'];
+  auctionId: Scalars['String'];
+}>;
+
+
+export type GetMaxAndAddMaxMutation = (
+  { __typename?: 'Mutation' }
+  & { getMaxAndAddMax: (
+    { __typename?: 'BidResponse' }
+    & { bid?: Maybe<(
+      { __typename?: 'BidEntity' }
+      & Pick<BidEntity, 'id' | 'price'>
+    )> }
+  ) }
+);
 
 export type LoginRegisMutationVariables = Exact<{
   name: Scalars['String'];
@@ -160,7 +183,80 @@ export type RegisAuctionMutation = (
   ) }
 );
 
+export type RegisBidMutationVariables = Exact<{
+  userId: Scalars['String'];
+  auctionId: Scalars['String'];
+  price: Scalars['Float'];
+  isMax: Scalars['Boolean'];
+}>;
 
+
+export type RegisBidMutation = (
+  { __typename?: 'Mutation' }
+  & { regisBid: (
+    { __typename?: 'BidResponse' }
+    & { bid?: Maybe<(
+      { __typename?: 'BidEntity' }
+      & Pick<BidEntity, 'id' | 'price' | 'isMaximum'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'message'>
+    )>> }
+  ) }
+);
+
+export type GetAllAuctionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllAuctionsQuery = (
+  { __typename?: 'Query' }
+  & { getAllAuctions: (
+    { __typename?: 'AuctionResponse' }
+    & { auction?: Maybe<Array<(
+      { __typename?: 'AuctionEntity' }
+      & Pick<AuctionEntity, 'id' | 'title' | 'description' | 'startPrice' | 'terminateAt'>
+    )>> }
+  ) }
+);
+
+
+export const GetMaxAndAddMaxDocument = gql`
+    mutation GetMaxAndAddMax($userId: String!, $auctionId: String!) {
+  getMaxAndAddMax(input: {userId: $userId, auctionId: $auctionId}) {
+    bid {
+      id
+      price
+    }
+  }
+}
+    `;
+export type GetMaxAndAddMaxMutationFn = Apollo.MutationFunction<GetMaxAndAddMaxMutation, GetMaxAndAddMaxMutationVariables>;
+
+/**
+ * __useGetMaxAndAddMaxMutation__
+ *
+ * To run a mutation, you first call `useGetMaxAndAddMaxMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGetMaxAndAddMaxMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [getMaxAndAddMaxMutation, { data, loading, error }] = useGetMaxAndAddMaxMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      auctionId: // value for 'auctionId'
+ *   },
+ * });
+ */
+export function useGetMaxAndAddMaxMutation(baseOptions?: Apollo.MutationHookOptions<GetMaxAndAddMaxMutation, GetMaxAndAddMaxMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GetMaxAndAddMaxMutation, GetMaxAndAddMaxMutationVariables>(GetMaxAndAddMaxDocument, options);
+      }
+export type GetMaxAndAddMaxMutationHookResult = ReturnType<typeof useGetMaxAndAddMaxMutation>;
+export type GetMaxAndAddMaxMutationResult = Apollo.MutationResult<GetMaxAndAddMaxMutation>;
+export type GetMaxAndAddMaxMutationOptions = Apollo.BaseMutationOptions<GetMaxAndAddMaxMutation, GetMaxAndAddMaxMutationVariables>;
 export const LoginRegisDocument = gql`
     mutation LoginRegis($name: String!) {
   login_regis(input: {name: $name}) {
@@ -240,3 +336,88 @@ export function useRegisAuctionMutation(baseOptions?: Apollo.MutationHookOptions
 export type RegisAuctionMutationHookResult = ReturnType<typeof useRegisAuctionMutation>;
 export type RegisAuctionMutationResult = Apollo.MutationResult<RegisAuctionMutation>;
 export type RegisAuctionMutationOptions = Apollo.BaseMutationOptions<RegisAuctionMutation, RegisAuctionMutationVariables>;
+export const RegisBidDocument = gql`
+    mutation RegisBid($userId: String!, $auctionId: String!, $price: Float!, $isMax: Boolean!) {
+  regisBid(
+    inputBid: {userId: $userId, auctionId: $auctionId, price: $price, isMax: $isMax}
+  ) {
+    bid {
+      id
+      price
+      isMaximum
+    }
+    errors {
+      message
+    }
+  }
+}
+    `;
+export type RegisBidMutationFn = Apollo.MutationFunction<RegisBidMutation, RegisBidMutationVariables>;
+
+/**
+ * __useRegisBidMutation__
+ *
+ * To run a mutation, you first call `useRegisBidMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisBidMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [regisBidMutation, { data, loading, error }] = useRegisBidMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      auctionId: // value for 'auctionId'
+ *      price: // value for 'price'
+ *      isMax: // value for 'isMax'
+ *   },
+ * });
+ */
+export function useRegisBidMutation(baseOptions?: Apollo.MutationHookOptions<RegisBidMutation, RegisBidMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisBidMutation, RegisBidMutationVariables>(RegisBidDocument, options);
+      }
+export type RegisBidMutationHookResult = ReturnType<typeof useRegisBidMutation>;
+export type RegisBidMutationResult = Apollo.MutationResult<RegisBidMutation>;
+export type RegisBidMutationOptions = Apollo.BaseMutationOptions<RegisBidMutation, RegisBidMutationVariables>;
+export const GetAllAuctionsDocument = gql`
+    query GetAllAuctions {
+  getAllAuctions {
+    auction {
+      id
+      title
+      description
+      startPrice
+      terminateAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllAuctionsQuery__
+ *
+ * To run a query within a React component, call `useGetAllAuctionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllAuctionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllAuctionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllAuctionsQuery(baseOptions?: Apollo.QueryHookOptions<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>(GetAllAuctionsDocument, options);
+      }
+export function useGetAllAuctionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>(GetAllAuctionsDocument, options);
+        }
+export type GetAllAuctionsQueryHookResult = ReturnType<typeof useGetAllAuctionsQuery>;
+export type GetAllAuctionsLazyQueryHookResult = ReturnType<typeof useGetAllAuctionsLazyQuery>;
+export type GetAllAuctionsQueryResult = Apollo.QueryResult<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>;

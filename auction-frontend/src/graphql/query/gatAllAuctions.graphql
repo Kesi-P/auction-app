@@ -1,0 +1,11 @@
+query GetAllAuctions {
+  getAllAuctions{
+    auction{
+      id
+      title
+      description
+      startPrice
+      terminateAt
+    }
+  }
+}

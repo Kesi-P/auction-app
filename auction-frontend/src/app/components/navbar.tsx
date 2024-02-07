@@ -7,14 +7,14 @@ export default function NavBar()  {
    
     useEffect(() => {
         // Perform localStorage action
-        const item = localStorage.getItem('userid')
+        const item = localStorage.getItem('userId')
         if(item != null){
             setlogIn(true)
         }
       }, [])
       
       const userLoggout=() =>{
-        localStorage.removeItem("userid");
+        localStorage.removeItem("userId");
         setlogIn(false)
         router.refresh()
       }

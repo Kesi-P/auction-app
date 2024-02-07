@@ -42,16 +42,17 @@ class BidResponse {
 @Resolver()
 export class BidsResolver {
 
-    @Query(() => BidResponse)
+    @Mutation(() => BidResponse)
     async getMaxAndAddMax(
         @Arg("input") input: AuctionInput,
         @Ctx() { em }: MyContext
     ): Promise<BidResponse> {
         try {
             const maxBid = await em.findOne(BidEntity, { auction: input.auctionId }, { orderBy: { isMaximum: 'DESC' } });
-
+            const updatePrice = await em.findOne(AuctionEntity,{id:input.auctionId})
             if (maxBid && maxBid.bidder.id === input.userId) {
                 const updateMaimum = wrap(maxBid).assign({ isMaximum: true });
+                wrap(updatePrice).assign({startPrice:maxBid.price})
                 await em.flush();
                 return {bid :updateMaimum};
             }
@@ -81,26 +82,26 @@ export class BidsResolver {
     ): Promise<BidResponse> {
         try {
             const user = await em.findOne(BidEntity,{bidder:inputBid.userId,auction:inputBid.auctionId,isMaximum:false});
-            const addPrice = await em.findOneOrFail(BidEntity, {auction: inputBid.auctionId})
-            const exPired = await em.findOneOrFail(AuctionEntity, {id: inputBid.auctionId})
-            let auctionExpired = true
-            if (exPired.terminateAt <= new Date() && exPired.startPrice < inputBid.price) {
-                const upDateAuctions = wrap(exPired).assign({
-                    status : AuctionStatus.FINISHED                    
-                })
-                await em.flush()
-                return {
-                    errors: [
-                      {
-                        message: "The auction is expired",
-                      },
-                    ],
-                  };; // Auction is expired
-            }
-            if(exPired.terminateAt > new Date()){
+            const addPrice = await em.findOne(BidEntity, {auction: inputBid.auctionId})
+            const exPired = await em.findOne(AuctionEntity, {id: inputBid.auctionId})
+            // console.log('user',user)
+            // if (exPired && exPired.terminateAt <= new Date() && exPired.startPrice < inputBid.price) {
+            //     const upDateAuctions = wrap(exPired).assign({
+            //         status : AuctionStatus.FINISHED                    
+            //     })
+            //     await em.flush()
+            //     return {
+            //         errors: [
+            //           {
+            //             message: "The auction is expired",
+            //           },
+            //         ],
+            //       };; // Auction is expired
+            // }
+            if(exPired && exPired.status == AuctionStatus.ON_GOING){
 
             
-            if (user && user.price > inputBid.price) {
+            if (user && user.price > inputBid.price && addPrice) {
                 // wrap(user).assign({ price: inputBid.price,updatedAt: new Date() });
                 // await em.flush();
                 user.price = inputBid.price;

@@ -1,0 +1,12 @@
+mutation RegisBid($userId:String!,$auctionId:String!,$price:Float!,$isMax:Boolean!){
+  regisBid(inputBid:{userId:$userId,auctionId:$auctionId,price:$price,isMax:$isMax}){
+    bid{
+      id
+      price
+      isMaximum
+    }
+    errors{
+      message
+    }
+  }
+} 

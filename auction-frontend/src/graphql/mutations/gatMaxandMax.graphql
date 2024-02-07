@@ -1,0 +1,8 @@
+mutation GetMaxAndAddMax($userId:String!,$auctionId:String!){
+  getMaxAndAddMax(input:{userId:$userId,auctionId:$auctionId}){
+    bid{
+      id
+      price
+    }
+  }
+}
