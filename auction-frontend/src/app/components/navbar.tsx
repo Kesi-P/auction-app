@@ -1,10 +1,19 @@
 "use client"
-import React, { useEffect ,useState} from "react";
+import React, { useEffect ,useState, useLayoutEffect} from "react";
 import { useRouter } from "next/navigation";
+import { redirect } from 'next/navigation';
+
 export default function NavBar()  {
   const router = useRouter();
     const [logIn, setlogIn] = useState(false);
-   
+
+    useLayoutEffect(() => {
+      const isAuth = localStorage.getItem('userId') ? true : false;
+      if(!isAuth){
+        redirect("/")
+      }
+    }, [])
+    
     useEffect(() => {
         // Perform localStorage action
         const item = localStorage.getItem('userId')
@@ -16,7 +25,6 @@ export default function NavBar()  {
       const userLoggout=() =>{
         localStorage.removeItem("userId");
         setlogIn(false)
-        router.refresh()
       }
     return (
         <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
@@ -31,10 +39,10 @@ export default function NavBar()  {
   {logIn &&
   <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
     <div className="text-sm lg:flex-grow">
-      <a  className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+      <a  className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" onClick={() => router.push('/buyer')}>
         Buyer
       </a>
-      <a  className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
+      <a  className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4" onClick={() => router.push('/seller')}>
         Seller
       </a>
       

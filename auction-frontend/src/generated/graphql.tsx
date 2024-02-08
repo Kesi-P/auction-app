@@ -221,6 +221,17 @@ export type GetAllAuctionsQuery = (
   ) }
 );
 
+export type GatAllUseraQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GatAllUseraQuery = (
+  { __typename?: 'Query' }
+  & { users: Array<(
+    { __typename?: 'UserEntity' }
+    & Pick<UserEntity, 'id' | 'name'>
+  )> }
+);
+
 
 export const GetMaxAndAddMaxDocument = gql`
     mutation GetMaxAndAddMax($userId: String!, $auctionId: String!) {
@@ -424,3 +435,38 @@ export function useGetAllAuctionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetAllAuctionsQueryHookResult = ReturnType<typeof useGetAllAuctionsQuery>;
 export type GetAllAuctionsLazyQueryHookResult = ReturnType<typeof useGetAllAuctionsLazyQuery>;
 export type GetAllAuctionsQueryResult = Apollo.QueryResult<GetAllAuctionsQuery, GetAllAuctionsQueryVariables>;
+export const GatAllUseraDocument = gql`
+    query gatAllUsera {
+  users {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGatAllUseraQuery__
+ *
+ * To run a query within a React component, call `useGatAllUseraQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGatAllUseraQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGatAllUseraQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGatAllUseraQuery(baseOptions?: Apollo.QueryHookOptions<GatAllUseraQuery, GatAllUseraQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GatAllUseraQuery, GatAllUseraQueryVariables>(GatAllUseraDocument, options);
+      }
+export function useGatAllUseraLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GatAllUseraQuery, GatAllUseraQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GatAllUseraQuery, GatAllUseraQueryVariables>(GatAllUseraDocument, options);
+        }
+export type GatAllUseraQueryHookResult = ReturnType<typeof useGatAllUseraQuery>;
+export type GatAllUseraLazyQueryHookResult = ReturnType<typeof useGatAllUseraLazyQuery>;
+export type GatAllUseraQueryResult = Apollo.QueryResult<GatAllUseraQuery, GatAllUseraQueryVariables>;

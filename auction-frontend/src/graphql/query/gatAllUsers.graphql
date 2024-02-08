@@ -1,0 +1,6 @@
+query gatAllUsera{
+  users{
+    id
+    name
+  }
+}

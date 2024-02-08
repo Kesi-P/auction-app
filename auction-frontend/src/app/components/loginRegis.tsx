@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 //import { Client, cacheExchange, fetchExchange,useMutation,gql } from 'urql';
 import { useMutation } from '@apollo/client';
 import { useRouter } from "next/navigation";
-import { useLoginRegisMutation } from '../../generated/graphql'
+import { useLoginRegisMutation,LoginRegisMutation,GatAllUseraDocument } from '../../generated/graphql'
 // const client = new Client({
 //   url: 'http://localhost:4000/graphql',
 //   exchanges: [cacheExchange, fetchExchange],
@@ -21,14 +21,29 @@ export default function LoginRegis() {
     setFormData(value);
   };
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-
+  
     try {
       const { data } = await loginRegis({
         variables: { name: formData },
+        update: (store, { data }) => {
+          const userData = store.readQuery<any>({
+            query: GatAllUseraDocument
+          });
+  
+          store.writeQuery({
+            query: GatAllUseraDocument,
+            data: {
+              users: data!.login_regis.id
+            }
+          });
+        }
       });
-      console.log(data)
+  
+      console.log('Data from loginRegis mutation:', data);
+  
+      // Assuming data contains the login_regis.id you want to store
       localStorage.setItem('userId', data?.login_regis.id);
       router.push('/seller');
     } catch (error) {

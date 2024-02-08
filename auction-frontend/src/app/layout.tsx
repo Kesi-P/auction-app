@@ -6,12 +6,13 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
 import NavBar from "./components/navbar";
 import "./globals.css";
+import client from './apolloClient';
 
 // Define your Apollo Client instance
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
-  cache: new InMemoryCache(),
-});
+// const client = new ApolloClient({
+//   uri: 'http://localhost:4000/graphql',
+//   cache: new InMemoryCache(),
+// });
 
 // // Define your metadata
 // export const metadata: Metadata = {
