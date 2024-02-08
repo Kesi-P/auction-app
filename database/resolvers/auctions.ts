@@ -81,6 +81,7 @@ export class AuctionResolver {
         @Ctx() { em }: MyContext
     ) {
         try {
+            console.log('num',input.startPrice)
             const newAuction = em.create(AuctionEntity, {
                 seller: input.userId,
                 title: input.title,

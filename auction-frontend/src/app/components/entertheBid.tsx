@@ -1,6 +1,6 @@
 "use client"
 import { useState,useEffect } from 'react';
-import { useRegisAuctionMutation, ItemCategory, AuctionStatus } from '../../generated/graphql';
+import { useRegisAuctionMutation, ItemCategory, AuctionStatus, useRegisBidMutation } from '../../generated/graphql';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import dateFormat, { masks } from "dateformat";
@@ -14,10 +14,11 @@ interface EnterBidProps {
 const EnterBid: React.FC<EnterBidProps> = ({ setShowModal, userId, auctionDetail }) => {
   const [ newPrice,setNewPrice] = useState(auctionDetail.startPrice)
   const [getisItmax] = useGetMaxAndAddMaxMutation()
-  const [isItmax, setIsitmax] = useState(0)
+  const [isItmax, setIsitmax] = useState(false)
   const newPriceBid = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewPrice(Number(event.target.value));
 };
+ const [ enterNewBid ] = useRegisBidMutation()
 
 useEffect(() => {
   const fetchData = async () => {
@@ -25,21 +26,34 @@ useEffect(() => {
           const {data} = await getisItmax({
               variables: { userId, auctionId: auctionDetail.id },
           });
-          setIsitmax(data?.getMaxAndAddMax.bid?.price)
-          console.log('ff',isItmax ,'rr',auctionDetail.startPrice,data?.getMaxAndAddMax.bid?.price)
+          console.log('pp',data?.getMaxAndAddMax.sellerId,userId)
+          data?.getMaxAndAddMax.sellerId == userId ? setIsitmax(true) : setIsitmax(false)
       } catch (error) {
           console.error('Error fetching data:', error);
       }
   };
 
   fetchData();
-}, []);
+}, [auctionDetail]);
 
 
-const createAuction = () => {
 
-}
-  
+const createNewBid = async () => {
+  setShowModal(false)
+  try {
+    const { data } = await enterNewBid({
+      variables: { 
+        userId: localStorage.getItem('userId') || '',
+        auctionId: auctionDetail.id,
+        price: newPrice,
+        isMax: isItmax
+      },
+    });
+    console.log('Auction created:', data);
+  } catch (error) {
+    console.error('Error creating auction:', error);
+  }
+}; 
   return (
     <>
     <div
@@ -68,7 +82,7 @@ const createAuction = () => {
     <span className="inline-block  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><p>{getDaysLeft(new Date(auctionDetail.terminateAt))} days left</p></span>
     <span className="inline-block  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><p>Price {auctionDetail.startPrice} Euro</p></span>
   </div>
- { isItmax == auctionDetail.startPrice ? null : (
+ 
   <form className="w-full max-w-sm">
   <div className="md:flex md:items-center mb-6">
     <div className="md:w-1/3">
@@ -77,14 +91,22 @@ const createAuction = () => {
       </label>
     </div>
     <div className="md:w-2/3">
-      <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" 
+      {/* <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight " 
+      name='newPriceBid'
       value={auctionDetail.startPrice}
       onChange={ newPriceBid}
-      />
+      /> */}
+      <input
+              className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              name="newPriceBid"
+              placeholder={auctionDetail.startPrice}
+      onChange={ newPriceBid}
+              type="number"
+            />
     </div>
   </div>
   </form>
-  )}
+
   <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -93,15 +115,15 @@ const createAuction = () => {
                   >
                     Close
                   </button>
-                  { isItmax == auctionDetail.startPrice ? null : (
+                  
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => createAuction()}
+                    onClick={() => createNewBid()}
                   >
                     Create Auctions
                   </button>
-                  )}
+                 
                 </div>
 </div>
 </div>

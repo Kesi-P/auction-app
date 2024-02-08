@@ -13,25 +13,28 @@ export default function Home() {
     description: '',
     category: ItemCategory.Vehicle,
     startPrice: 0,
-    // terminateAt: new Date(),
     status : AuctionStatus.OnGoing
   });
-  const [date,setDate] = useState(new Date())
+  const [date, setDate] = useState<Date>(new Date());
   const [showModal, setShowModal] = useState(false);
   const [regisAuction] = useRegisAuctionMutation();
 
   const handleInputChange = (e:any) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    console.log(formData)
+    // If the input is for startPrice, parse the value to a number
+    const parsedValue = name === 'startPrice' ? parseFloat(value) : value;
+
+    setFormData({ ...formData, [name]: value ,[name]: parsedValue,});
+    
   };
 
   const createAuction = async () => {
-    console.log(date)
-    setShowModal(false)
+    console.log(new Date(date))
+    console.log(formData)
     try {
+      setShowModal(false)
       const { data } = await regisAuction({
-        variables: { ...formData ,terminateAt:date},
+        variables: { ...formData ,terminateAt:new Date(date)},
       });
       console.log('Auction created:', data);
     } catch (error) {
@@ -149,7 +152,7 @@ export default function Home() {
             <DatePicker
               name="terminateAt"
               onChange={(value) =>
-                setDate(dateFormat(value,"yyyy-mm-dd HH:MM:ss"))
+                setDate(value)
               }
               value={date}
               

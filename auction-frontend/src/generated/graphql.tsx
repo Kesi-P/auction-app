@@ -67,6 +67,7 @@ export type BidResponse = {
   __typename?: 'BidResponse';
   errors?: Maybe<Array<FieldError>>;
   bid?: Maybe<BidEntity>;
+  sellerId?: Maybe<Scalars['String']>;
 };
 
 
@@ -144,6 +145,7 @@ export type GetMaxAndAddMaxMutation = (
   { __typename?: 'Mutation' }
   & { getMaxAndAddMax: (
     { __typename?: 'BidResponse' }
+    & Pick<BidResponse, 'sellerId'>
     & { bid?: Maybe<(
       { __typename?: 'BidEntity' }
       & Pick<BidEntity, 'id' | 'price'>
@@ -227,6 +229,7 @@ export const GetMaxAndAddMaxDocument = gql`
       id
       price
     }
+    sellerId
   }
 }
     `;

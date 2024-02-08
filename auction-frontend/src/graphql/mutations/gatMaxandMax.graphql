@@ -4,5 +4,6 @@ mutation GetMaxAndAddMax($userId:String!,$auctionId:String!){
       id
       price
     }
+    sellerId
   }
 }

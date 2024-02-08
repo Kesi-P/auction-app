@@ -37,6 +37,8 @@ class BidResponse {
     errors?: FieldError[];
     @Field(() => BidEntity, { nullable: true })
     bid?: BidEntity;
+    @Field(() => String,{ nullable: true } )
+    sellerId?: String;
 }
 
 @Resolver()
@@ -54,7 +56,8 @@ export class BidsResolver {
                 const updateMaimum = wrap(maxBid).assign({ isMaximum: true });
                 wrap(updatePrice).assign({startPrice:maxBid.price})
                 await em.flush();
-                return {bid :updateMaimum};
+                //return {bid :maxBid};
+                return { sellerId :maxBid.bidder.id}
             }
             return {
                 errors: [
@@ -62,7 +65,7 @@ export class BidsResolver {
                     message: "You bid is the maximum",
                   },
                 ],
-              };;
+              };
         } catch (error) {
             console.error('Error:', error);
             return {
@@ -82,6 +85,7 @@ export class BidsResolver {
     ): Promise<BidResponse> {
         try {
             const user = await em.findOne(BidEntity,{bidder:inputBid.userId,auction:inputBid.auctionId,isMaximum:false});
+            const maxBid = await em.find(BidEntity, { auction: inputBid.auctionId }, { orderBy: { isMaximum: 'DESC' } });
             const addPrice = await em.findOne(BidEntity, {auction: inputBid.auctionId})
             const exPired = await em.findOne(AuctionEntity, {id: inputBid.auctionId})
             // console.log('user',user)
@@ -107,6 +111,11 @@ export class BidsResolver {
                 user.price = inputBid.price;
                 user.updatedAt = new Date();
                 addPrice.price += 1; // Increment start price
+                if(inputBid.price > maxBid[0]?.price){
+                  wrap(maxBid[0]).assign({isMaximum:true})
+                  wrap(maxBid[0]).assign({isMaximum:false})
+                  //user.isMaximum = true
+                }
                 await em.flush();
                 return { bid: user };
             }
