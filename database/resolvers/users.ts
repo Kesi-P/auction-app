@@ -1,9 +1,6 @@
 import { Resolver, Query,Ctx, Mutation, InputType, Field,Arg } from "type-graphql";
 import { UserEntity } from "../entities/User";
 import { MyContext } from "./mycontext";
-import { EntityInitData } from '../types/types'
-import {BidEntity} from '../entities/Bid'
-import { Any, getConnection } from 'typeorm'
 
 @InputType()
 class UserInput{
@@ -44,18 +41,5 @@ export class UsersResolver {
           }
 
           
-    //     if(!user){
-    //     //    user = em.create(UserEntity,{createdAt: '2024-01-30T11:08:38.000Z',
-    //     //         updatedAt: '2024-01-30T11:08:38.000Z',
-    //     //         name: 'Eminem'});
-    //        try{
-    //         const result = await getConnection().createQueryBuilder().insert().into(UserEntity).values({name: input.name,
-    //     })
-    //     .returning("*")
-    //     .execute();
-    //     userNew = result.raw[0];
-    //   return userNew
-    //        }catch(err){}
-    //     }
         }
 }

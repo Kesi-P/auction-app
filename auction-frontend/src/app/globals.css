@@ -27,6 +27,7 @@ body {
   .ml-corner{margin-right: auto;}
   .b{margin-top: auto;}
   .t{margin-bottom: auto;}
+  .bg-brown-500 {background-color: #f5efe5ff !important}
 }
 
 @layer utilities {

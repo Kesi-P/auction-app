@@ -43,6 +43,12 @@ class BidResponse {
 
 @Resolver()
 export class BidsResolver {
+    
+      @Query(() => [BidEntity])
+      bids(@Ctx() {em}:MyContext):Promise<BidEntity[]> {
+      
+        return em.find(BidEntity,{})
+      }
 
     @Mutation(() => BidResponse)
     async getMaxAndAddMax(
@@ -56,7 +62,7 @@ export class BidsResolver {
                 const updateMaimum = wrap(maxBid).assign({ isMaximum: true });
                 wrap(updatePrice).assign({startPrice:maxBid.price})
                 await em.flush();
-                //return {bid :maxBid};
+                // return the see of isMaximum
                 return { sellerId :maxBid.bidder.id}
             }
             return {
@@ -88,26 +94,10 @@ export class BidsResolver {
             const maxBid = await em.find(BidEntity, { auction: inputBid.auctionId }, { orderBy: { isMaximum: 'DESC' } });
             const addPrice = await em.findOne(BidEntity, {auction: inputBid.auctionId})
             const exPired = await em.findOne(AuctionEntity, {id: inputBid.auctionId})
-            // console.log('user',user)
-            // if (exPired && exPired.terminateAt <= new Date() && exPired.startPrice < inputBid.price) {
-            //     const upDateAuctions = wrap(exPired).assign({
-            //         status : AuctionStatus.FINISHED                    
-            //     })
-            //     await em.flush()
-            //     return {
-            //         errors: [
-            //           {
-            //             message: "The auction is expired",
-            //           },
-            //         ],
-            //       };; // Auction is expired
-            // }
+           
             if(exPired && exPired.status == AuctionStatus.ON_GOING){
-
             
             if (user && user.price > inputBid.price && addPrice) {
-                // wrap(user).assign({ price: inputBid.price,updatedAt: new Date() });
-                // await em.flush();
                 user.price = inputBid.price;
                 user.updatedAt = new Date();
                 addPrice.price += 1; // Increment start price

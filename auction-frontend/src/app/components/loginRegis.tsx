@@ -1,29 +1,23 @@
 "use client";
-import Image from "next/image";
 import React, { useState } from 'react';
-//import { Client, cacheExchange, fetchExchange,useMutation,gql } from 'urql';
-import { useMutation } from '@apollo/client';
 import { useRouter } from "next/navigation";
-import { useLoginRegisMutation,LoginRegisMutation,GatAllUseraDocument } from '../../generated/graphql'
-// const client = new Client({
-//   url: 'http://localhost:4000/graphql',
-//   exchanges: [cacheExchange, fetchExchange],
-// });
+import { useLoginRegisMutation, GatAllUseraDocument } from '../../generated/graphql';
+
 export default function LoginRegis() {
   const router = useRouter();
   const [formData, setFormData] = useState('');
 
-  // Fetch data from GraphQL
+  // Fetch data from GraphQL using useMutation hook
   const [loginRegis] = useLoginRegisMutation();
 
-  const handleChange = (e:any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setFormData(value);
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     try {
       const { data } = await loginRegis({
         variables: { name: formData },
@@ -31,7 +25,7 @@ export default function LoginRegis() {
           const userData = store.readQuery<any>({
             query: GatAllUseraDocument
           });
-  
+
           store.writeQuery({
             query: GatAllUseraDocument,
             data: {
@@ -40,25 +34,26 @@ export default function LoginRegis() {
           });
         }
       });
-  
-      console.log('Data from loginRegis mutation:', data);
-  
-      // Assuming data contains the login_regis.id you want to store
+
+
+      // Store the user ID in local storage
       localStorage.setItem('userId', data?.login_regis.id);
+      // Redirect to the seller page after successful login
       router.push('/seller');
     } catch (error) {
       console.error('Error logging in:', error);
     }
   };
 
+  // Render the LoginRegis component
   return (
     <>
-      <h1>Welcome</h1>
+      <h1 className='xl'>Welcome</h1>
       <div className="relative flex place-items-center">
         <form className="w-full max-w-sm" onSubmit={handleSubmit}>
-          <div className="flex items-center border-b border-teal-500 py-2">
+          <div className="flex items-center border-b border-brown-500 py-2">
             <input
-              className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              className="shadow appearance-none border rounded w-full  text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
               name="username"
               value={formData}
               onChange={handleChange}
@@ -66,7 +61,7 @@ export default function LoginRegis() {
               placeholder="Enter your username"
             />
             <button
-              className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
+              className="flex-shrink-0 bg-brown-500 hover:bg-brown-700 border-black-500 hover:border-brown-700 text-sm border-4 text-black py-1 px-2 rounded"
               type="submit"
             >
               Login

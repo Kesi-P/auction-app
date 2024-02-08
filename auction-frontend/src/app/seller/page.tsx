@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react';
-import { useRegisAuctionMutation, ItemCategory, AuctionStatus } from '../../generated/graphql';
+import { useRegisAuctionMutation, ItemCategory, AuctionStatus, GetAllAuctionsDocument } from '../../generated/graphql';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import dateFormat, { masks } from "dateformat";
@@ -42,6 +42,8 @@ export default function Home() {
     }
   };
 
+ 
+
   return (
     <>
       
@@ -76,7 +78,7 @@ export default function Home() {
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
-                    Modal Title
+                    New Auction
                   </h3>
                   
                 </div>
@@ -132,7 +134,8 @@ export default function Home() {
               onChange={handleInputChange}
             />
           </div>
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+          <div className="flex flex-wrap -mx-3 mb-2"></div>
+          <div className="w-full md:w-1/2  mb-6 md:mb-0">
             <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
               Initial Price
             </label>
@@ -151,11 +154,8 @@ export default function Home() {
             </label>
             <DatePicker
               name="terminateAt"
-              onChange={(value) =>
-                setDate(value)
-              }
-              value={date}
-              
+              onChange={(value) => setDate(value) }
+              value={date}           
               
             />
           </div>
